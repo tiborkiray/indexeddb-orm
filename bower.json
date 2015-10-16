@@ -1,0 +1,27 @@
+{
+  "name": "indexeddb-orm",
+  "version": "0.0.1",
+  "homepage": "https://github.com/tiborkiray/indexeddb-orm",
+  "authors": [
+    "Tibor Kiray <tibor.kiray@gmail.com>"
+  ],
+  "description": "IndexedDB wrapper with ORM features",
+  "main": "indexeddb-orm.js",
+  "moduleType": [],
+  "keywords": [
+    "indexeddb",
+    "wrapper",
+    "orm"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
