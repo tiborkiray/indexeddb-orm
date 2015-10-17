@@ -1,23 +1,22 @@
-var indexedDbOrm = {};
-indexedDbOrm = (function(){
+var $idb = {};
+$idb = (function(){
   var _database = null;
   config = {
     databaseName : 'test'
   };
   var daoEntities = [];
-  var reservedWords = ["ormConfig", "ormCreate", "ormDelete", "ormUpdate", "ormFindByIndex"];
   baseEntity = {
-    ormConfig: {
+    $config: {
       version: 0,
       store: '',
       keyPath: 'id',
       autoIncrement: true,
       indexes: {}
     },
-    ormCreate: function(data){
+    $create: function(data){
       var deferred = $.Deferred();
-      var transaction =  indexedDbOrm.getDatabase().transaction([this.ormConfig.store],"readwrite");
-      var store = transaction.objectStore(this.ormConfig.store);
+      var transaction =  $idb.getDatabase().transaction([this.$config.store],"readwrite");
+      var store = transaction.objectStore(this.$config.store);
       //Perform the add
       var request = store.add(data);
       request.onsuccess = function(e) {
@@ -28,10 +27,10 @@ indexedDbOrm = (function(){
       };
       return deferred.promise();
     },
-    ormUpdate: function(data){
+    $update: function(data){
       var deferred = $.Deferred();
-      var transaction =  indexedDbOrm.getDatabase().transaction([this.ormConfig.store],"readwrite");
-      var store = transaction.objectStore(this.ormConfig.store);
+      var transaction =  $idb.getDatabase().transaction([this.$config.store],"readwrite");
+      var store = transaction.objectStore(this.$config.store);
       //Perform the add
       var request = store.put(data);
       request.onsuccess = function(e) {
@@ -42,10 +41,10 @@ indexedDbOrm = (function(){
       };
       return deferred.promise();
     },
-    ormDelete: function(keyPathValue){
+    $delete: function(keyPathValue){
       var deferred = $.Deferred();
-      var transaction = database.transaction([this.ormConfig.store],"readwrite");
-      var store = transaction.objectStore(this.ormConfig.store);
+      var transaction = database.transaction([this.$config.store],"readwrite");
+      var store = transaction.objectStore(this.$config.store);
       var request = store.delete(keyPathValue);
       request.onsuccess = function(e) {
         deferred.resolve();
@@ -55,43 +54,43 @@ indexedDbOrm = (function(){
       };
       return deferred.promise();
     },
-    ormFindByIndex: function(myIndex, query){
+    $findByIndex: function(myIndex, query){
       var deferred = $.Deferred();
-      var transaction = database.transaction([this.ormConfig.store],"readonly");
-      var store = transaction.objectStore(this.ormConfig.store);
+      var transaction = database.transaction([this.$config.store],"readonly");
+      var store = transaction.objectStore(this.$config.store);
       var index = store.index(myIndex);
       if( Object.prototype.toString.call(query) === '[object Array]' ) {
         index.get(IDBKeyRange.only(query)).onsuccess = function(event){
           deferred.resolve(event.target.result);
-        }; 
+        };
       }else{
         index.get(query).onsuccess = function(event){
           deferred.resolve(event.target.result);
-        }; 
+        };
       }
       return deferred.promise();
     }
   };
   addEntity = function(extendedEntity, storeName){
     var temp = {};
-    indexedDbOrm.baseEntity.ormConfig.store = storeName;
-    $.extend(true, temp, indexedDbOrm.baseEntity, extendedEntity);
+    $idb.baseEntity.$config.store = storeName;
+    $.extend(true, temp, $idb.baseEntity, extendedEntity);
     $.extend(true, extendedEntity, temp);
-    indexedDbOrm.daoEntities[storeName] = extendedEntity;
+    $idb.daoEntities[storeName] = extendedEntity;
   };
   function _indexedDBOk() {
     return "indexedDB" in window;
   }
   function _getVersion(){
     var version = 1;
-    var entities = indexedDbOrm.daoEntities;
+    var entities = $idb.daoEntities;
     for(var idx in entities){
-      version = version + entities[idx].ormConfig.version;
+      version = version + entities[idx].$config.version;
     }
     return version;
   }
   function _deleteAllTables(){
-    var entities = indexedDbOrm.daoEntities;
+    var entities = $idb.daoEntities;
     for(var storeName in entities){
       if(database.objectStoreNames.contains(storeName)) {
         console.log("Deleting store \"" + storeName + "\" ...");
@@ -103,19 +102,19 @@ indexedDbOrm = (function(){
     }
   }
   function _createStores(){
-    var entities = indexedDbOrm.daoEntities;
+    var entities = $idb.daoEntities;
     for(var storeName in entities){
       var entity = entities[storeName];
-      var store = database.createObjectStore(storeName, {keyPath: entity.ormConfig.keyPath, autoIncrement: entity.ormConfig.autoIncrement});
-      if(typeof entity.ormConfig.indexes != 'undefined' && Object.keys(entity.ormConfig.indexes).length > 0){
-        for(var j in entity.ormConfig.indexes){
-          var index = entity.ormConfig.indexes[j];
+      var store = database.createObjectStore(storeName, {keyPath: entity.$config.keyPath, autoIncrement: entity.$config.autoIncrement});
+      if(typeof entity.$config.indexes != 'undefined' && Object.keys(entity.$config.indexes).length > 0){
+        for(var j in entity.$config.indexes){
+          var index = entity.$config.indexes[j];
           store.createIndex(index.name, index.keyPath, index.params);
         }
       }else{
         var properties = Object.keys(entity);
         for(var k in properties){
-          if($.inArray(properties[k], reservedWords) === -1){
+          if(properties[k].indexOf("$") !== 0){
             console.log('Creating index for: ' + properties[k]);
             store.createIndex(properties[k], properties[k], { unique: false, multiEntry: false });
           }

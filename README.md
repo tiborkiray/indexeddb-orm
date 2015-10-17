@@ -1,5 +1,7 @@
 # IndexedDB ORM/Wrapper
 
+> The project is still in alpha and some things might change
+
 The purpose of the project is to simplify the work with the IndexedDB databases.
 
 Currently we depend on [jquery](http://jquery.com/) but based on the feedback we'll remove or keep this dependency. Tested with `1.11.3` and `2.1.4` jquery versions and both work fine.
@@ -21,18 +23,18 @@ var foo = {
 	prop2: null,
 	prop3: null
 };
-indexedDbOrm.addEntity(foo, 'myNewStore');
-indexedDbOrm.init("myIndexedDB");
+$idb.addEntity(foo, 'myNewStore');
+$idb.init("myIndexedDB");
 ```
 
 The result of this code is a new IndexedDB database called `myIndexedDB` and a store (table) called `myNewStore`. All the properties of the `foo` object will become indexes and an autoincrement `id` index will be automatically created.
 
 The `foo` object will be enhanced with few helper functions:
 
-`ormCreate(jsonObject)`
+`$create(jsonObject)`
 
 ```javascript
-var createRequest = foo.create({
+var createRequest = foo.$create({
 	prop1: 'foo',
 	prop2: 'bar',
 	prop3: 'something else'
@@ -40,16 +42,16 @@ var createRequest = foo.create({
 createRequest.done(function(){
 
 });
-createRequest.faile(function(){
+createRequest.fail(function(){
 
 });
 ```
 the result is a new record in the `myNewStore` store
 
-`ormFindByIndex(index, value)`
+`$findByIndex(index, value)`
 
 ```javascript
-var findRequest = foo.ormFindByIndex('prop2', 'bar');
+var findRequest = foo.$findByIndex('prop2', 'bar');
 findRequest.done(function(result){
 	// this is where you handle your result that is the previously inserted JSON object
 	// undefined when noting was found
@@ -60,10 +62,10 @@ findRequest.fail(function(){
 });
 ```
 
-`ormUpdate(jsonObject)`
+`$update(jsonObject)`
 
 ```
-var updateRequest = foo.ormUpdate({
+var updateRequest = foo.$update({
 	id: 1,
 	prop1: 'foo',
 	prop2: 'bar',
@@ -77,10 +79,10 @@ updateRequest.fail(function(){
 });
 ```
 
-`ormDelete(id)`
+`$delete(id)`
 
 ```
-var deleteRequest = foo.ormDelete(1);
+var deleteRequest = foo.$delete(1);
 deleteRequest.done(function(){
 	// handle the success
 });
@@ -90,7 +92,7 @@ deleteRequest.fail(function(){
 ```
 
 ## Configuration
-In case you need more that the default store configuration, there is a `ormConfig` property that can be used to tweak the store.
+In case you need more that the default store configuration, there is a `$config` property that can be used to tweak the store.
 
 ```javascript
 var foo = {
@@ -98,7 +100,7 @@ var foo = {
 	prop2: null,
 	prop3: null,
 	prop4: null,
-	ormConfig: {
+	$config: {
 		version: 0,
 		indexes:{
 			prop1: { name: "prop1index", keyPath: "prop1", params: {unique: false, multiEntry: false}},
@@ -108,6 +110,6 @@ var foo = {
 		}
 	}
 };
-indexedDbOrm.addEntity(foo, 'myNewStore');
-indexedDbOrm.init("myIndexedDB");
+$idb.addEntity(foo, 'myNewStore');
+$idb.init("myIndexedDB");
 ```

@@ -3,7 +3,7 @@ var newTestEnity = {
   prop2: 2,
   prop3: "lala",
   prop4: 3,
-  ormConfig: {
+  $config: {
     version: 0,
     indexes:{
       prop1: { name: "prop1", keyPath: "prop1", params: {unique: false, multiEntry: false}},
@@ -14,25 +14,25 @@ var newTestEnity = {
     }
   }
 };
-indexedDbOrm.addEntity(newTestEnity, 'newtest');
+$idb.addEntity(newTestEnity, 'newtest');
 
 var testEntity = {
   testColumn1: null,
   testColumn2: null,
   testColumn3: null,
-  ormConfig: {
+  $config: {
     version: 0
   }
 };
 
-indexedDbOrm.addEntity(testEntity, 'test');
+$idb.addEntity(testEntity, 'test');
 
 var userEntity = {
   email: null,
   password: null,
   firstName: null,
   lastName: null,
-  ormConfig: {
+  $config: {
     version: 0,
     keyPath: 'email',
     autoIncrement: false,
@@ -44,13 +44,13 @@ var userEntity = {
     }
   }
 };
-indexedDbOrm.addEntity(userEntity, 'user');
+$idb.addEntity(userEntity, 'user');
 
 var taskEntity = {
   title: null,
   description: null,
   asignee: null,
-  ormConfig: {
+  $config: {
     version: 0,
     keyPath: 'id',
     autoIncrement: true,
@@ -61,49 +61,49 @@ var taskEntity = {
     }
   }
 };
-indexedDbOrm.addEntity(taskEntity, 'task');
+$idb.addEntity(taskEntity, 'task');
 
 $(function(){
-  indexedDbOrm.init("warehouse");
+  $idb.init("warehouse");
 });
 
 function addTest(prop){
-  var blah = newTestEnity.ormCreate({prop1: prop + 1, prop2: prop + 2, prop3: "foo" + prop, prop4: "bar" + prop});
+  var blah = newTestEnity.$create({prop1: prop + 1, prop2: prop + 2, prop3: "foo" + prop, prop4: "bar" + prop});
   blah.done(function(){
     //alert(":D");
   });
 }
 
 function deleteTest(id){
-  var blah = newTestEnity.ormDelete(id);
+  var blah = newTestEnity.$delete(id);
   blah.done(function(){
     // alert("deleted");
   });
 }
 
 function getTest(index, value){
-  var blah = newTestEnity.ormFindByIndex(index, value);
+  var blah = newTestEnity.$findByIndex(index, value);
   blah.done(function(result){
     console.log(result);
   });
 }
 
 function getTestMulti(prop1, prop2){
-  var blah = newTestEnity.ormFindByIndex('multi', [prop1, prop2]);
+  var blah = newTestEnity.$findByIndex('multi', [prop1, prop2]);
   blah.done(function(result){
     console.log(result);
   });
 }
 
 function updateTest(index, searchValue, newValue){
-  var getItem = newTestEnity.ormFindByIndex(index, searchValue);
+  var getItem = newTestEnity.$findByIndex(index, searchValue);
   getItem.done(function(item){
     console.log(item);
     item.prop3 = "foo" + newValue;
     item.prop4 = "bar" + newValue;
-    var update = newTestEnity.ormUpdate(item);
+    var update = newTestEnity.$update(item);
     update.done(function(){
-      var updatedItem = newTestEnity.ormFindByIndex(index, searchValue);
+      var updatedItem = newTestEnity.$findByIndex(index, searchValue);
       updatedItem.done(function(newItem){
         console.log(newItem);
       });
