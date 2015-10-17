@@ -2,7 +2,18 @@
 
 The purpose of the project is to simplify the work with the IndexedDB databases.
 
+Currently we depend on [jquery](http://jquery.com/) but based on the feedback we'll remove or keep this dependency. Tested with `1.11.3` and `2.1.4` jquery versions and both work fine.
+
 ## Quickstart
+
+### Install
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="indexeddb-orm.js"></script>
+```
+
+### Run
 
 ```javascript
 var foo = {
@@ -23,7 +34,7 @@ The `foo` object will be enhanced with few helper functions:
 * ormDelete(id)
 
 ## Configuration
-In case you need more that the default store configuration, there is a `ormConfig` property that can be used on the object.
+In case you need more that the default store configuration, there is a `ormConfig` property that can be used to tweak the store.
 
 ```javascript
 var foo = {
