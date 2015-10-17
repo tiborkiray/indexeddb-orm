@@ -28,10 +28,66 @@ indexedDbOrm.init("myIndexedDB");
 The result of this code is a new IndexedDB database called `myIndexedDB` and a store (table) called `myNewStore`. All the properties of the `foo` object will become indexes and an autoincrement `id` index will be automatically created.
 
 The `foo` object will be enhanced with few helper functions:
-* ormCreate(jsonObject)
-* ormFindByIndex(index, value)
-* ormUpdate(jsonObject)
-* ormDelete(id)
+
+`ormCreate(jsonObject)`
+
+```javascript
+var createRequest = foo.create({
+	prop1: 'foo',
+	prop2: 'bar',
+	prop3: 'something else'
+});
+createRequest.done(function(){
+
+});
+createRequest.faile(function(){
+
+});
+```
+the result is a new record in the `myNewStore` store
+
+`ormFindByIndex(index, value)`
+
+```javascript
+var findRequest = foo.ormFindByIndex('prop2', 'bar');
+findRequest.done(function(result){
+	// this is where you handle your result that is the previously inserted JSON object
+	// undefined when noting was found
+});
+findRequest.fail(function(){
+	// this is where you handle your request failure
+	// NO RESULT is not a failure
+});
+```
+
+`ormUpdate(jsonObject)`
+
+```
+var updateRequest = foo.ormUpdate({
+	id: 1,
+	prop1: 'foo',
+	prop2: 'bar',
+	prop3: 'something else'
+});
+updateRequest.done(function(){
+	// handle the success
+});
+updateRequest.fail(function(){
+	handle the failure
+});
+```
+
+`ormDelete(id)`
+
+```
+var deleteRequest = foo.ormDelete(1);
+deleteRequest.done(function(){
+	// handle the success
+});
+deleteRequest.fail(function(){
+	handle the failure
+});
+```
 
 ## Configuration
 In case you need more that the default store configuration, there is a `ormConfig` property that can be used to tweak the store.
