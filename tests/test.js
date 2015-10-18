@@ -64,7 +64,15 @@ var taskEntity = {
 $idb.addEntity(taskEntity, 'task');
 
 $(function(){
-  $idb.init("warehouse");
+  var myIdb = $idb.init("warehouse");
+  myIdb.done(function(database){
+  	// do something with your initialized database
+  	console.log(database);
+  });
+  myIdb.fail(function(error){
+  	// handle/debug your error
+  	console.log(error);
+  });
 });
 
 function addTest(prop){

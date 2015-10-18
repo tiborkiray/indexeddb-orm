@@ -18,23 +18,33 @@ Currently we depend on [jquery](http://jquery.com/) but based on the feedback we
 ### Run
 
 ```javascript
-var foo = {
+var exampleDef= {
 	prop1: null,
 	prop2: null,
 	prop3: null
 };
-$idb.addEntity(foo, 'myNewStore');
-$idb.init("myIndexedDB");
+$idb.addEntity(exampleDef, 'exampleStore');
+var myIdb = $idb.init("myIndexedDB");
+// at this point any operation will fail because the init operation is async
+// you should use the done event in order to work with your db
+myIdb.done(function(database){
+	// do something with your initialized database
+});
+myIdb.fail(function(error){
+	// handle/debug your error
+});
 ```
 
-The result of this code is a new IndexedDB database called `myIndexedDB` and a store (table) called `myNewStore`. All the properties of the `foo` object will become indexes and an autoincrement `id` index will be automatically created.
+The result of this code is a new IndexedDB database called `myIndexedDB` and a store (table) called `exampleStore`. All the properties of the `exampleDef` object will become indexes and an autoincrement `id` index will be automatically created.
 
-The `foo` object will be enhanced with few helper functions:
+If you need direct access to the previously created database you only have to call `$idb.getDatabase()`
+
+The `exampleDef` object will be enhanced with few helper functions:
 
 `$create(jsonObject)`
 
 ```javascript
-var createRequest = foo.$create({
+var createRequest = exampleDef.$create({
 	prop1: 'foo',
 	prop2: 'bar',
 	prop3: 'something else'
@@ -46,12 +56,12 @@ createRequest.fail(function(){
 
 });
 ```
-the result is a new record in the `myNewStore` store
+the result is a new record in the `exampleStore` store
 
 `$findByIndex(index, value)`
 
 ```javascript
-var findRequest = foo.$findByIndex('prop2', 'bar');
+var findRequest = exampleDef.$findByIndex('prop2', 'bar');
 findRequest.done(function(result){
 	// this is where you handle your result that is the previously inserted JSON object
 	// undefined when noting was found
@@ -65,7 +75,7 @@ findRequest.fail(function(){
 `$update(jsonObject)`
 
 ```
-var updateRequest = foo.$update({
+var updateRequest = exampleDef.$update({
 	id: 1,
 	prop1: 'foo',
 	prop2: 'bar',
@@ -82,7 +92,7 @@ updateRequest.fail(function(){
 `$delete(id)`
 
 ```
-var deleteRequest = foo.$delete(1);
+var deleteRequest = exampleDef.$delete(1);
 deleteRequest.done(function(){
 	// handle the success
 });
@@ -95,7 +105,7 @@ deleteRequest.fail(function(){
 In case you need more that the default store configuration, there is a `$config` property that can be used to tweak the store.
 
 ```javascript
-var foo = {
+var exampleDef = {
 	prop1: null,
 	prop2: null,
 	prop3: null,
@@ -110,6 +120,6 @@ var foo = {
 		}
 	}
 };
-$idb.addEntity(foo, 'myNewStore');
+$idb.addEntity(exampleDef, 'exampleStore');
 $idb.init("myIndexedDB");
 ```

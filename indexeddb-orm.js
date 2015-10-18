@@ -124,6 +124,7 @@ $idb = (function(){
   }
   function init(dbName){
     if(!_indexedDBOk) return;
+    var deferred = $.Deferred();
     var version = _getVersion();
     console.log("Database Version: " + version);
     var openRequest = indexedDB.open(dbName, version);
@@ -136,10 +137,13 @@ $idb = (function(){
     openRequest.onsuccess = function(e) {
         console.log("DB init succeded!");
         database = e.target.result;
+        deferred.resolve(database);
     };
     openRequest.onerror = function(e) {
         console.log("DB init ERROR!");
+        deferred.reject(e);
     };
+    return deferred.promise();
   }
   function getDatabase(dbName){
     if(database === null){
